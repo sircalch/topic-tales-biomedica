@@ -1,0 +1,262 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} sidebar-mini {% endblock body_class %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+  <style>
+    ul li {
+      list-style-type: none;
+    }
+    .dot-separator {
+      height: 2px;
+      width: 2px;
+      background: #000;
+      border-radius: 50%;
+    }
+    .actions span {
+      cursor: pointer;
+    }
+    .modal {
+      z-index: 99999 !important;
+    }
+  </style>
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+
+<div class="container-fluid py-4">
+
+    <!-- Info component -->
+    <div class="row">
+        <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header pb-0">
+            <h6>
+                Async Tasks Manager
+            </h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2 px-4 mt-3">
+            
+            {% if scripts %}
+                <p>
+                Superusers are able to create/cancel tasks.
+                <br />
+                Ordinary users can only view execution logs and running tasks (no other interactions allowed).
+                </p>
+            {% else %}
+                <p class="text-danger">
+                No scripts detected - Please update the configuration (CELERY_SCRIPTS_DIR, CELERY_LOGS_DIR)
+                </p>
+            {% endif %}
+            
+            </div>
+        </div>
+        </div>
+    </div>
+    
+    <!-- Task Manager Component -->
+    <div class="row">
+        <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header pb-0">
+            <h6>Tasks List</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                <thead>
+                    <tr>
+                        <th class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7">Name</th>
+                        <th class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7 ps-2">Script</th>
+                        <th class="text-center text-uppercase text-dark text-xxs font-weight-bolder opacity-7">STATE</th>
+                        <th class="text-center text-uppercase text-dark text-xxs font-weight-bolder opacity-7">Script</th>
+                        <th class="text-center text-uppercase text-dark text-xxs font-weight-bolder opacity-7">ARGS</th>                   
+                        <th class="text-center text-dark opacity-7">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Running Task -->
+                    <form action="{{ url_for('tasks_blueprint.run_script_route') }}" method="post">
+                        <tr>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div class="mx-3">
+                                    <i class="fa fa-file-code-o fa-2x"></i>
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">
+                                        {% if tasks %}
+                                            <h6 class="mb-0 text-sm">
+                                            {{ tasks.task_name }}
+                                            </h6>
+                                        {% else %}
+                                            <h6 class="mb-0 text-sm">
+                                            execute_script
+                                            </h6>
+                                        {% endif %}
+                                    </h6>
+                                    <p class="text-xs text-dark mb-0">
+                                    Celery Task
+                                    </p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="text-xs font-weight-bold mb-0">
+                                {% if tasks %}
+                                    <h6 class="mb-0 text-sm">
+                                    {{ tasks.periodic_task_name|name_from_path }}
+                                    </h6>
+                                {% endif %}
+                            </p>
+                            <div class="text-xs text-dark mb-0" style="width:200px;height:50px;overflow-x: scroll;">
+                                Latest status: {% if tasks %} {{ tasks.status }} {% endif %}
+                            </div>                          
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                            {% if tasks.status == "STARTED" %}
+                            <span class="badge bg-warning">RUNNING</span>
+                            {% elif tasks.status == "FAILURE" %}
+                            <span class="badge bg-danger">FINISHED</span>
+                            {% elif tasks.status == "REVOKED" %}
+                            <span class="badge bg-secondary">CANCELLED</span>
+                            {% else %}
+                            <span class="badge bg-success">FINISHED</span>                          
+                            {% endif %}
+                        </td>
+                        <td class="align-middle text-center">
+                            <span class="text-dark text-xs font-weight-bold">
+                                <select class="form-control" name="script">
+                                {% for item in scripts %}
+                                    <option value="{{item}}">{{ item }}</option>
+                                {% endfor %}
+                                </select>
+                            </span>
+                        </td>
+                        <td class="align-middle text-center">
+                            <span class="text-dark text-xs font-weight-bold">
+                            <input type="text" id="args" name="args">
+                            </span>
+                        </td>
+                        <td class="align-middle text-center">
+                            <button href="javascript:;" class="text-dark font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                                Execute
+                            </button>
+                        </td>
+                        </tr>
+                    </form>
+                </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Task Logs -->
+    <div class="row">
+        <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header pb-0">
+            <h6>
+                LOGS
+            </h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-0">
+                <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                    <tr>
+                    <th class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7">Task</th>
+                    <th class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+                    <th class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7 ps-2">Start TS</th>
+                    <th class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7 ps-2">End TS</th>
+                    <th class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7 ps-2">Logs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in task_results %}
+                    <tr>
+
+                        <td>
+                        <div class="d-flex px-2">
+                            <div class="my-auto">
+                            <h6 class="mb-0 text-sm">
+                                {{result.id}} - {{result.task_name}}
+                            </h6>
+                            <p class="text-xs text-dark mb-0">
+                                {{result.periodic_task_name|name_from_path}}
+                            </p>
+                            </div>
+                        </div>
+                        </td>
+                        <td class="align-middle">
+                        <p class="text-sm 
+                            {% if result.status == 'SUCCESS' %} text-success
+                            {% elif result.status == 'FAILURE' %} text-danger
+                            {% else %} text-warning {% endif %}
+                            mb-0"
+                        >
+                        {% if result.status %}
+                            {{result.status}}
+                        {% else %}
+                            RUNNING
+                        {% endif %}
+                        </p>
+                        </td>
+                        
+                        <td class="align-middle">
+                        <p class="text-sm mb-0">{{result.date_created|date_format}}</p>
+                        </td>
+                        
+                        <td class="align-middle">
+                        <p class="text-sm mb-0">{{result.date_done|date_format}}</p>
+                        </td>      
+                        <td class="">
+                        <p class="text-sm mb-0">
+                            <a data-bs-toggle="modal" data-bs-target="#view-log-{{result.id}}" href="#">View LOG</a> 
+                        </p>
+                        </td>                                               
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="log-modal" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h6 class="modal-title mx-auto" id="modal-title-default">
+            Task LOG
+            </h6>
+        </div>
+        <div class="modal-body">
+            <p id="log-content">
+            </p>
+        </div>
+        <div class="modal-footer text-center">
+            <button type="button" class="btn btn-link mx-auto" data-bs-dismiss="modal">Dismiss</button>
+        </div>
+        </div>
+    </div>
+</div> 
+
+
+
+{% endblock content %}

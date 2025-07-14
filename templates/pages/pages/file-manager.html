@@ -1,0 +1,206 @@
+{% extends "layouts/base.html" %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block extrastyle %}
+
+  <style>
+    ul li {
+      list-style-type: none;
+    }
+    .dot-separator {
+      height: 2px;
+      width: 2px;
+      background: #000;
+      border-radius: 50%;
+    }
+    .actions span {
+      cursor: pointer;
+    }
+    .modal {
+      z-index: 99999 !important;
+    }
+  </style>
+
+{% endblock extrastyle %}
+
+{% block content %}
+
+
+    <div class="container-fluid py-4 px-5">
+        <div class="row">
+            <div class="col-lg-3 border py-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    {% if loop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.name }}</li>
+                    {% else %}
+                    {% if breadcrumb.name|lower == 'media' %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.name }}</li>
+                    {% else %}
+                        <li class="breadcrumb-item"><a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
+                    {% endif %}
+                    {% endif %}
+                {% endfor %}
+                </ol>
+            </nav>
+            <ul class="p-0">
+                {% for directory in directories %}
+                <li style="font-size: 17px" class="">
+                    <i class="fas fa-folder"></i>
+                    <a 
+                    style="cursor: pointer;"
+                    onclick="window.location.href = '{{ url_for('file_manager_blueprint.file_manager', directory=directory.path|encoded_path) }}';"
+                    >
+                    {{ directory.name }}
+                    </a>
+                </li>
+                {% with directory=directory %}
+                    {% include 'includes/subdirectories.html' %}
+                {% endwith %}
+                {% endfor %}
+            </ul>
+            </div>
+            <div class="col-lg-9 border py-2">
+            <div class="d-flex justify-content-start mb-3">
+                <label for="fileInput">
+                <i class="fas fa-upload text-primary fs-3"></i>
+                </label>
+                <form method="post" action="{{ url_for('file_manager_blueprint.upload_file') }}" id="upload-file" enctype="multipart/form-data">
+                
+                <input type="hidden" name="directory" value="{{ selected_directory }}">
+                <input id="fileInput" class="d-none" onchange="submitForm()" type="file" name="file" required>
+                </form>
+            </div>
+            {% if files %}
+                <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                    <th scope="col">File Name</th>
+                    <th scope="col">File Type</th>
+                    <th scope="col">Actions</th>
+                    </tr>
+                    {% for file in files %}
+                    <tr data-bs-toggle="tooltip" title="{{file.file_path|info_value}}">
+                    <td>
+                        <span>
+                        {{ file.filename }}
+                        </span>
+                    </td>
+                    <td>{{ file.filename|file_extension|upper|replace('.', '') }}</td>
+                    <td>
+                        <div class="d-flex align-items-center actions">
+                        <span data-bs-toggle="modal" data-bs-target="#info-{{loop.index}}">
+                            <i title="Info" class="fas fa-info-circle text-success"></i>
+                        </span>
+                        <div class="dot-separator mx-2"></div>
+                        <span data-bs-toggle="modal" data-bs-target="#file-{{loop.index}}">
+                            <i title="View" class="fas fa-eye text-primary"></i>
+                        </span>
+                        <div class="dot-separator mx-2"></div>
+                        <span data-bs-toggle="modal" data-bs-target="#delete-{{loop.index}}">
+                            <i title="Delete" class="fas fa-trash text-danger"></i>
+                        </span>
+                        </div>
+                    </td>
+                    </tr>
+
+                    <!-- View Modal -->
+                    <div class="modal fade" id="file-{{loop.index}}" data-backdrop="static" data-keyboard="false"
+                    tabindex="-1" aria-labelledby="fileLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="fileLabel">{{ file.filename }}</h4>
+                            <span>
+                            <a href="{{ url_for('file_manager_blueprint.download_file', file_path=file.file|encoded_file_path) }}">
+                                <i title="Download" class="fas fa-download text-success fs-4"></i>
+                            </a>
+                            </span>
+                            <div class="" id="modal-close-btn-{{loop.index}}" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fs-5"></i>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            {% if file.filename|file_extension in ".jpg, .png, .gif" %}
+                            <img height="700px" class="w-100" src="/media/{{ file.file }}" alt="df">
+                            {% elif file.filename|file_extension in ".mp4, .webm, .ogg" %}
+                            <video class="w-100" height="700" controls>
+                                <source src="/media/{{ file.file }}" type="video/mp4">
+                            </video>
+                            {% elif file.filename|file_extension in ".pdf, .txt" %}
+                            <iframe src="/media/{{ file.file }}" width="100%" height="700px"></iframe>
+                            {% elif file.filename|file_extension in ".csv" %}
+                            <pre class="bg-dark text-light p-3">{{ file.csv_text }}</pre>
+                            {% endif %}
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="delete-{{loop.index}}" tabindex="-1" aria-labelledby="deleteLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="deleteLabel">Delete File</h4>
+                        </div>
+                        <div class="modal-body">
+                            {{file.filename}}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a class="btn btn-danger" href="{{ url_for('file_manager_blueprint.delete_file', file_path=file.file|encoded_file_path) }}">Delete</a>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Info Modal -->
+                    <div class="modal fade" id="info-{{loop.index}}" tabindex="-1" aria-labelledby="infoLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="infoLabel">File Info</h4>
+                            <div class="" id="modal-close-btn-{{loop.index}}" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fs-5"></i>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ url_for('file_manager_blueprint.save_info', file_path=file.file_path|encoded_file_path) }}" method="post">
+                            <div class="form-group mb-2">
+                                <label for="" class="form-label">File Info</label>
+                                <input type="text" value="{{file.file_path|info_value}}" name="info" id="" class="form-control">
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    {% endfor %}
+                </table>
+                </div>
+            {% else %}
+                <p>No files</p>
+            {% endif %}
+            </div>
+        </div>
+        
+    </div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block extra_js %}
+  <script>
+    function submitForm() {
+        document.getElementById("upload-file").submit();
+    }
+  </script>
+
+{% endblock extra_js %}
