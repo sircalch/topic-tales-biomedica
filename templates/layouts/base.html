@@ -1,69 +1,176 @@
 {% load static %}
 <!DOCTYPE html>
-
-<html lang="en">
-
+<html lang="es">
 <head>
-  <title>Datta Able - {% block title %}Most Complete Bootstrap Admin Template{% endblock title %}</title>
-  {% include 'includes/head.html' %}
-  {% block style %}
-    <!-- Favicon icon -->
-    <link rel="icon" href="{{url_for('static', filename = 'assets/images/favicon.ico')}}" type="image/x-icon">
-    <!-- fontawesome icon -->
-    <link rel="stylesheet" href="{{url_for('static', filename = 'assets/fonts/fontawesome/css/fontawesome-all.min.css')}}">
-    <!-- animation css -->
-    <link rel="stylesheet" href="{{url_for('static', filename = 'assets/css/plugins/animate.min.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename = 'assets/css/plugins/perfect-scrollbar.css')}}">
+    <title>TopicTales Biomédica - {% block title %}{% endblock title %}</title>
+    
+    <!-- Meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Sistema Médico Profesional TopicTales Biomédica">
+    <meta name="keywords" content="software medico, clinica, consultas, pacientes">
+    <meta name="author" content="TopicTales Biomédica">
+
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Datta Able Core CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    
     {% block extrastyle %}{% endblock extrastyle %}
-    <!-- vendor css -->
-    <link rel="stylesheet" href="{{url_for('static', filename = 'assets/css/style.css')}}">
-    <!-- -->
-  {% endblock style %}
 </head>
-<body class="{% block body %}{% endblock body %}">
 
-  {% block pre_loader %}
-    {% include 'includes/pre-loader.html' %}
-  {% endblock pre_loader %}
-
-  {% block sidebar %}
-    {% include 'includes/sidebar.html' %}
-  {% endblock sidebar %}
-
-  {% block header %}
-    {% include 'includes/navigation.html' %}
-  {% endblock header %}
-
-  	<!-- [ Main Content ] start -->
-	<div class="pcoded-main-container">
-		<div class="pcoded-wrapper">
-			<div class="pcoded-content">
-				<div class="pcoded-inner-content">
-
-          {% block breadcrumbs %}
-            {% include 'includes/breadcrumbs.html' %}
-          {% endblock breadcrumbs %}
-
-          <div class="main-body">
-						<div class="page-wrapper">
-              {% block content %}{% endblock content %}
-            </div>
-          </div>
-
+<body class="{% block bodyclass %}{% endblock bodyclass %}">
+    <!-- Pre-loader start -->
+    <div class="loader-bg">
+        <div class="loader-track">
+            <div class="loader-fill"></div>
         </div>
-      </div>
     </div>
-  </div>
-  
+    <!-- Pre-loader end -->
 
-  {% include 'includes/scripts.html' %}
+    <!-- Mobile header -->
+    <div class="mobile-header">
+        <div class="m-header">
+            <div class="b-bg">
+                <i class="feather icon-activity"></i>
+            </div>
+            <span class="b-title">TopicTales Biomédica</span>
+        </div>
+    </div>
 
-  {% block fixed_plugin %}
-  
-  {% endblock fixed_plugin %}
-  
-  {% block extra_js %}{% endblock extra_js %}
+    {% include 'includes/sidebar.html' %}
+    
+    <!-- Header start -->
+    <header class="navbar pcoded-header">
+        <div class="navbar-wrapper">
+            <div class="navbar-logo">
+                <a class="mobile-menu" id="mobile-collapse" href="#!"><span></span></a>
+                <div class="mobile-search">
+                    <div class="header-search">
+                        <div class="main-search morphsearch-search">
+                            <div class="input-group">
+                                <span class="input-group-text search-close">
+                                    <i class="feather icon-x input-group-text"></i>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Buscar...">
+                                <span class="input-group-text search-btn">
+                                    <i class="feather icon-search input-group-text"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'dashboard' %}">
+                    <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="TopicTales Logo">
+                </a>
+                <a class="mobile-options waves-effect waves-light">
+                    <i class="feather icon-more-horizontal"></i>
+                </a>
+            </div>
+            <div class="navbar-container container-fluid">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <div class="search-bar">
+                            <div class="position-relative">
+                                <input type="text" class="form-control border-0 shadow-none px-3" placeholder="Buscar paciente, cita...">
+                                <span class="search-icon">
+                                    <i class="feather icon-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav ms-auto">
+                    <li class="dropdown nav-item">
+                        <a href="#!" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="feather icon-bell icon-animated-bell"></i>
+                            <span class="badge bg-danger">3</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end notification">
+                            <div class="noti-head">
+                                <h6 class="d-inline-block m-b-0">Notificaciones</h6>
+                                <div class="float-end">
+                                    <a href="#!" class="me-2">Marcar todas leídas</a>
+                                </div>
+                            </div>
+                            <ul class="noti-body">
+                                <li class="n-title">
+                                    <p class="m-b-0">NUEVAS</p>
+                                </li>
+                                <li class="notification">
+                                    <div class="d-flex">
+                                        <img class="img-radius" src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="Usuario">
+                                        <div class="flex-grow-1">
+                                            <p><strong>Cita programada</strong></p>
+                                            <p>María García - 15:30</p>
+                                            <small>hace 2 min</small>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="noti-footer">
+                                <a href="#!">Ver todas</a>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <img src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="user" class="img-radius wid-40">
+                            <span>{{ user.get_full_name|default:user.username }}</span>
+                            <i class="feather icon-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <div class="dropdown-header">
+                                <div class="media">
+                                    <img class="align-self-center" src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="user">
+                                    <div class="media-body">
+                                        <h5 class="mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                                        <p>{{ user.email }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a class="dropdown-item" href="#!">
+                                <i class="feather icon-user"></i> Mi Perfil
+                            </a>
+                            <a class="dropdown-item" href="#!">
+                                <i class="feather icon-settings"></i> Configuración
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'logout' %}">
+                                <i class="feather icon-log-out"></i> Cerrar Sesión
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <!-- Header end -->
 
+    <!-- Main content start -->
+    <main class="pcoded-main-container">
+        <div class="pcoded-content">
+            {% block content %}{% endblock content %}
+        </div>
+    </main>
+    <!-- Main content end -->
 
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'assets/js/pcoded.js' %}"></script>
+    <script src="{% static 'assets/js/menu-setting.js' %}"></script>
+
+    {% block extrascripts %}{% endblock extrascripts %}
 </body>
 </html>

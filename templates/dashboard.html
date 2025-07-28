@@ -1,0 +1,92 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Principal{% endblock title %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    <i class="feather icon-activity me-2"></i>
+                    Bienvenido a TopicTales Biomédica
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card daily-sales">
+                            <div class="card-block">
+                                <h6 class="mb-4">Sistema Médico</h6>
+                                <div class="row d-flex align-items-center">
+                                    <div class="col-9">
+                                        <h3 class="f-w-300 d-flex align-items-center m-b-0">
+                                            <i class="feather icon-check-circle text-success f-30 m-r-5"></i> Activo
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card monthly-revenue">
+                            <div class="card-block">
+                                <h6 class="mb-4">Usuario Conectado</h6>
+                                <div class="row d-flex align-items-center">
+                                    <div class="col-9">
+                                        <h3 class="f-w-300 d-flex align-items-center m-b-0">
+                                            <i class="feather icon-user text-primary f-30 m-r-5"></i> 
+                                            {{ user.get_full_name|default:user.username }}
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card monthly-revenue">
+                            <div class="card-block">
+                                <h6 class="mb-4">Versión</h6>
+                                <div class="row d-flex align-items-center">
+                                    <div class="col-9">
+                                        <h3 class="f-w-300 d-flex align-items-center m-b-0">
+                                            <i class="feather icon-info text-info f-30 m-r-5"></i> v1.0
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card monthly-revenue">
+                            <div class="card-block">
+                                <h6 class="mb-4">Licencia</h6>
+                                <div class="row d-flex align-items-center">
+                                    <div class="col-9">
+                                        <h3 class="f-w-300 d-flex align-items-center m-b-0">
+                                            <i class="feather icon-shield text-warning f-30 m-r-5"></i> Pro
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-4">
+                    <h6><i class="feather icon-info me-2"></i>Sistema Limpio y Listo</h6>
+                    <p class="mb-0">
+                        ✅ Tu login y sidebar de Datta Able Pro están conservados exactamente como los tenías.<br>
+                        ✅ Estructura base de Django limpia y funcional.<br>
+                        ✅ Listo para implementar los módulos médicos profesionales.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

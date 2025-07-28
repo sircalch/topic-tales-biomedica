@@ -1,5 +1,7 @@
-# core/views.py
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
-def home(request):
-    return render(request, 'pages/dashboard.html')
+@login_required
+def dashboard(request):
+    """Dashboard principal del sistema médico"""
+    return render(request, 'dashboard.html')

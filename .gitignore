@@ -1,0 +1,92 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Environment variables
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.thumbs.db
+Thumbs.db
+
+# Static files (will be collected)
+/staticfiles/
+/static_collected/
+
+# Temporary files
+*.tmp
+*.temp
+nul
+debug_server.py
+medical_*.py
+emergency_server.py
+simple_test.py
+test_server.py
+create_sample_data.py
+standalone_views*.py
+settings_minimal.py
+urls_minimal.py
+*_minimal.sqlite3
+security.log
+django.log
+
+# Development directories and unused apps
+django-datta-able-pro/
+ai/
+appointments/
+billing/
+clinic_core/
+clinic_specialties/
+communications/
+equipment/
+lab/
+laboratory/
+medical/
+medical_ai/
+medical_lab/
+medical_records/
+pharmacy/
+reports/
+specialties/
+veterinary/
